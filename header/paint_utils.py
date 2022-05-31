@@ -2,13 +2,13 @@ import numpy as np
 import cv2
 
 def place_icons(image, size):
-    icon_name = ["addIcon", "changeIcon", "originIcon", "removeIcon", "resetIcon", "quitIcon"]
+    icon_name = ["addIcon", "changeIcon", "originIcon", "removeIcon", "resetIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon"]
 
     icons = [(i % 2, i//2, 1, 1) for i in range(len(icon_name))]
     icons = np.multiply(icons, size*2)
 
     for roi, name in zip(icons, icon_name):
-        icon = cv2.imread("./images/%s.png" % name, cv2.IMREAD_COLOR)
+        icon = cv2.imread("../images/%s.png" % name, cv2.IMREAD_COLOR)
         if icon is None:
             print("Can't load img")
             continue
