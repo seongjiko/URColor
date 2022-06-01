@@ -2,7 +2,20 @@ import numpy as np
 import cv2
 
 def place_icons(image, size):
-    icon_name = ["addIcon", "changeIcon", "originIcon", "removeIcon", "resetIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon", "colorIcon"]
+    icon_name = [
+                "addColorIcon",     # 0
+                "changeIcon",  # 1
+                "originIcon",  # 2
+                "removeIcon",  # 3
+                "resetIcon",   # 4
+                "colorIcon",   # 5
+                "colorIcon",   # 6
+                "colorIcon",   # 7
+                "colorIcon",   # 8
+                "colorIcon",   # 9
+                "colorIcon",   # 10
+                "colorIcon"    # 11
+                 ]
 
     icons = [(i % 2, i//2, 1, 1) for i in range(len(icon_name))]
     icons = np.multiply(icons, size*2)
