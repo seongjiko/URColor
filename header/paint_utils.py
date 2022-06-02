@@ -3,17 +3,17 @@ import cv2
 
 def place_icons(image, size):
     icon_name = [
-                "addColorIcon",     # 0
-                "changeIcon",  # 1
-                "originIcon",  # 2
-                "removeIcon",  # 3
-                "resetIcon",   # 4
-                "colorIcon",   # 5
-                "colorIcon",   # 6
-                "colorIcon",   # 7
-                "colorIcon",   # 8
-                "colorIcon",   # 9
-                "colorIcon",   # 10
+                "openIcon",     # 0 파일열기
+                "brushIcon",  # 1 색 추출
+                "colorIcon",  # 2 중첩모드
+                "changeIcon",  # 3 변경
+                "resetIcon",   # 4 초기화
+                "originIcon",   # 5 원본 보기
+                "contrastIcon",   # 6 대비 증가
+                "blurIcon",   # 7 블러 적용
+                "sharpningIcon",   # 8 샤프닝 적용
+                "inversionIcon",   # 9
+                "quitIcon",   # 10
                 "colorIcon"    # 11
                  ]
 
