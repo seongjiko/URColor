@@ -1,5 +1,7 @@
 from header.paint_init import *
 from header.paint_utils import *
+import tkinter as tk
+from tkinter import filedialog
 
 def onMouse(event, x, y, flags, param):
     global pt1, pt2, mouse_mode, draw_mode
@@ -10,7 +12,7 @@ def onMouse(event, x, y, flags, param):
 
         for i, (x0, y0, w, h) in enumerate(icons):
             if x0 <= x < x0+w and y0 <= y < y0+h:
-                if i < 6:
+                if i < 0:
                     mouse_mode = 0
                     draw_mode = i
 
@@ -22,12 +24,15 @@ def onMouse(event, x, y, flags, param):
 
     if mouse_mode >= 2:
         mouse_mode = 0 if x < 125 else 3
+
         pt2 = (x, y)
 
+color_img = np.array([])
 def command(mode):
-    global icons, image, Color, hue
+    global icons, image, Color, hue, color_img
 
     if mode == PALETTE:
+        print('select PALETTE')
         pixel = image[pt2[::-1]]
         x, y, w, h = icons[COLOR]
         image[y:y+h-1, x:x+w-1] = pixel
@@ -36,6 +41,11 @@ def command(mode):
     elif mode == HUE_IDX:
         create_colorPlatte(image, pt2[0], icons[PALETTE])
 
+    elif mode == OPEN_IMAGE:
+        print('open file')
+        root = tk.Tk()
+        filePath = filedialog.askopenfilename(initialdir='', title= 'Select file', filetypes=(('png files', '*.png'), ('jpg files', '*.jpg'), ('all files', '*.*')))
+        root.destroy()
     cv2.imshow("PaintCV", image)
 
 image = np.full((500, 800, 3), 255, np.uint8)
