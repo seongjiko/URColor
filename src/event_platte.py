@@ -1,3 +1,5 @@
+import cv2
+
 from header.paint_init import *
 from header.paint_utils import *
 import tkinter as tk
@@ -28,37 +30,57 @@ def onMouse(event, x, y, flags, param):
         pt2 = (x, y)
 
 color_img = np.array([])
+gray_img = np.array([])
 def command(mode):
-    global icons, image, Color, hue, color_img
+    global icons, background, Color, hue, color_img, gray_img, color_img_resize #hsv_img
 
+    color_img_resize = []
     if mode == PALETTE:
         print('select PALETTE')
-        pixel = image[pt2[::-1]]
+        pixel = background[pt2[::-1]]
         x, y, w, h = icons[COLOR]
-        image[y:y+h-1, x:x+w-1] = pixel
+        background[y:y+h-1, x:x+w-1] = pixel
         Color = tuple(map(int, pixel))
 
     elif mode == HUE_IDX:
-        create_colorPlatte(image, pt2[0], icons[PALETTE])
+        create_colorPlatte(background, pt2[0], icons[PALETTE])
 
     elif mode == OPEN_IMAGE:
         print('open file')
         root = tk.Tk()
         filePath = filedialog.askopenfilename(initialdir='', title= 'Select file', filetypes=(('png files', '*.png'), ('jpg files', '*.jpg'), ('all files', '*.*')))
         root.destroy()
-    cv2.imshow("PaintCV", image)
 
-image = np.full((500, 800, 3), 255, np.uint8)
-icons = place_icons(image, (60, 60))
+        color_img = cv2.imread(filePath)
+        color_img_resize = cv2.resize(color_img, (680, 500))
+        # hsv_img = cv2.cvtColor(color_img, cv2.COLOR_BGR2HSV)
+        gray_img = cv2.cvtColor(color_img, cv2.COLOR_BGR2GRAY)
+        gray_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2BGR) # 색상 대입을 위해 3차원화
+        gray_img_resize = cv2.resize(gray_img, (680, 500))
+        background[:, 120:] = gray_img_resize
+        cv2.imshow("PaintCV", background)
+
+    elif EXTRACT_COLOR:
+        B = COLOR[0]
+        G = COLOR[1]
+        R = COLOR[2]
+        for i in range(120, 800):
+            for j in range(500):
+                pixel = color_img_resize[i-120, j]
+                if B - 10 < pixel <= B + 10 and pixel <= G + 10 and R - 10 < pixel <= R + 10:
+                    background[i, j] = pixel
+
+background = np.full((500, 800, 3), 255, np.uint8)
+icons = place_icons(background, (60, 60))
 x, y, w, h = icons[-1]
 
 PALETTE_roi = (0, y+h+2, 120, 120)
 hueIndex_roi = (0, y+h+124, 120, 15)
 icons.append(PALETTE_roi)
 icons.append(hueIndex_roi)
-create_colorPlatte(image, 0, icons[PALETTE])
-create_hueIndex(image, icons[HUE_IDX])
+create_colorPlatte(background, 0, icons[PALETTE])
+create_hueIndex(background, icons[HUE_IDX])
 
-cv2.imshow("PaintCV", image)
+cv2.imshow("PaintCV", background)
 cv2.setMouseCallback("PaintCV", onMouse)
 cv2.waitKey(0)

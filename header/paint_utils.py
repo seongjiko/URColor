@@ -5,16 +5,16 @@ def place_icons(image, size):
     icon_name = [
                 "openIcon",     # 0 파일열기
                 "brushIcon",  # 1 색 추출
-                "colorIcon",  # 2 중첩모드
+                "colorStackIcon",  # 2 중첩모드
                 "changeIcon",  # 3 변경
                 "resetIcon",   # 4 초기화
                 "originIcon",   # 5 원본 보기
                 "contrastIcon",   # 6 대비 증가
                 "blurIcon",   # 7 블러 적용
-                "sharpningIcon",   # 8 샤프닝 적용
-                "inversionIcon",   # 9
-                "quitIcon",   # 10
-                "colorIcon"    # 11
+                "edgeIcon",   # 8 샤프닝 적용
+                "inversionIcon",   # 9 색 반전
+                "quitIcon",   # 10 프로그램 종료
+                "colorIcon"    # 11 색상
                  ]
 
     icons = [(i % 2, i//2, 1, 1) for i in range(len(icon_name))]
