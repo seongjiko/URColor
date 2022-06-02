@@ -5,6 +5,28 @@ from header.paint_utils import *
 import tkinter as tk
 from tkinter import filedialog
 
+def BGR2H(color):
+    b, g, r = color
+    b_ = b / 255
+    g_ = g / 255
+    r_ = r / 255
+
+    cmax = max([b_, g_, r_])
+    cmin = min([b_, g_, r_])
+    result = 0
+    temp = cmax - cmin
+
+    if cmax == b_:
+        result = 60 * ((r_ - g_) / temp + 4)
+
+    if cmax == g_:
+        result = 60 * ((b_ - r_) / temp + 2)
+
+    if cmax == r_:
+        result = 60 * (((g_ - b_) / temp) % 6)
+
+    return result
+
 def onMouse(event, x, y, flags, param):
     global pt1, pt2, mouse_mode, draw_mode
 
@@ -32,9 +54,8 @@ def onMouse(event, x, y, flags, param):
 color_img = np.array([])
 gray_img = np.array([])
 def command(mode):
-    global icons, background, Color, hue, color_img, gray_img, color_img_resize #hsv_img
+    global icons, background, Color, hue, color_img, gray_img, color_img_resize, hsv_img_resize #hsv_img
 
-    color_img_resize = []
     if mode == PALETTE:
         print('select PALETTE')
         pixel = background[pt2[::-1]]
@@ -53,23 +74,24 @@ def command(mode):
 
         color_img = cv2.imread(filePath)
         color_img_resize = cv2.resize(color_img, (680, 500))
-        # hsv_img = cv2.cvtColor(color_img, cv2.COLOR_BGR2HSV)
         gray_img = cv2.cvtColor(color_img, cv2.COLOR_BGR2GRAY)
         gray_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2BGR) # 색상 대입을 위해 3차원화
         gray_img_resize = cv2.resize(gray_img, (680, 500))
+        hsv_img_resize = cv2.cvtColor(color_img_resize, cv2.COLOR_BGR2HSV)
         background[:, 120:] = gray_img_resize
-        cv2.imshow("PaintCV", background)
+
 
     elif EXTRACT_COLOR:
-        B = COLOR[0]
-        G = COLOR[1]
-        R = COLOR[2]
-        for i in range(120, 800):
-            for j in range(500):
-                pixel = color_img_resize[i-120, j]
-                if B - 10 < pixel <= B + 10 and pixel <= G + 10 and R - 10 < pixel <= R + 10:
-                    background[i, j] = pixel
+        HUE = BGR2H(Color)
+        print(HUE)
+        for i in range(500):
+            for j in range(120, 800):
+                p = hsv_img_resize[i][j-120]
+                if HUE < p[0] <= HUE + 30:
+                    # print('paint!')
+                    background[i, j] = color_img_resize[i, j-120]
 
+    cv2.imshow("PaintCV", background)
 background = np.full((500, 800, 3), 255, np.uint8)
 icons = place_icons(background, (60, 60))
 x, y, w, h = icons[-1]
