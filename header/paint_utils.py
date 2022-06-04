@@ -9,7 +9,7 @@ def place_icons(image, size):
                 "changeIcon",  # 3 변경
                 "resetIcon",   # 4 초기화
                 "originIcon",   # 5 원본 보기
-                "contrastIcon",   # 6 대비 증가
+                "undoIcon",   # 6 뒤로가기
                 "blurIcon",   # 7 블러 적용
                 "edgeIcon",   # 8 샤프닝 적용
                 "inversionIcon",   # 9 색 반전
@@ -49,8 +49,3 @@ def create_colorPlatte(image, idx, roi):
     palette = np.multiply(palette, ratios).astype('uint8')
 
     image[y:y+h, x:x+w] = cv2.cvtColor(palette, cv2.COLOR_HSV2BGR)
-
-# image = np.full((500, 800, 3), 255, np.uint8)
-# icons = place_icons(image, (60, 60))
-# cv2.imshow("PaintCV", image)
-# cv2.waitKey(0)

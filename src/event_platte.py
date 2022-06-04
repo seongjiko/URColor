@@ -24,26 +24,6 @@ def BGR2H(color):
         result += 170
 
     return result
-    # b, g, r = color
-    # b_ = b / 255
-    # g_ = g / 255
-    # r_ = r / 255
-    #
-    # cmax = max([b_, g_, r_])
-    # cmin = min([b_, g_, r_])
-    # result = 0
-    # temp = cmax - cmin
-    #
-    # if cmax == b_:
-    #     result = 60 * ((r_ - g_) / temp + 4)
-    #
-    # if cmax == g_:
-    #     result = 60 * ((b_ - r_) / temp + 2)
-    #
-    # if cmax == r_:
-    #     result = 60 * (((g_ - b_) / temp) % 6)
-
-    #return result
 
 def onMouse(event, x, y, flags, param):
     global pt1, pt2, mouse_mode, draw_mode
@@ -66,7 +46,6 @@ def onMouse(event, x, y, flags, param):
 
     if mouse_mode >= 2:
         mouse_mode = 0 if x < 125 else 3
-
         pt2 = (x, y)
 
 color_img = np.array([])
@@ -78,6 +57,8 @@ usingStack = False # 스택모드
 def command(mode):
     global icons, background, Color, hue, color_img, gray_img, color_img_resize, hsv_img_resize #hsv_img
     global tempPos, gray_img_resize, usingStack
+    update = False
+
     if mode == PALETTE:
         print('select PALETTE')
         pixel = background[pt2[::-1]]
@@ -102,7 +83,7 @@ def command(mode):
         hsv_img_resize = cv2.cvtColor(color_img_resize, cv2.COLOR_BGR2HSV)
         background[:, 120:] = gray_img_resize
 
-
+        cv2.imwrite('../temp/log.jpg', background)
     elif mode == EXTRACT_COLOR:
         HUE = BGR2H(Color)
         print(HUE)
@@ -113,9 +94,11 @@ def command(mode):
         for i in range(500):
             for j in range(120, 800):
                 p = hsv_img_resize[i][j-120]
-                if HUE - 10 < p[0] <= HUE + 10 and p[1] != 0 and p[2] != 0:
+                if HUE - 20 < p[0] <= HUE + 20 and p[1] != 0 and p[2] != 0:
                     background[i, j] = color_img_resize[i, j-120]
                     tempPos.append([i, j])
+
+        cv2.imwrite('../temp/log.jpg', background)
 
     elif mode == STACK_COLOR:
         if usingStack :
@@ -128,16 +111,49 @@ def command(mode):
 
 
     elif mode == CHANGE_COLOR:
+        cv2.imwrite('../temp/log.jpg', background)
         for pos in tempPos:
             r, c = pos
             background[r, c] = Color
             tempPos = []
 
+
     elif mode == RESET_IMAGE:
+        print('reset')
+        cv2.imwrite('../temp/log.jpg', background)
         background[:, 120:] = gray_img_resize
 
+    elif mode == SHOW_ORIGIN:
+        print('show origin')
+        cv2.imwrite('../temp/log.jpg', background)
+        for i in range(500):
+            for j in range(120, 800):
+                # if [i, j] not in tempPos:
+                background[i, j] = color_img_resize[i, j-120]
+        background[:, 120:] = color_img_resize
+
+    elif mode == UNDO:
+        background = cv2.imread('../temp/log.jpg')
+
+
+    elif mode == BLURRING_IMAGE:
+        filter = np.ones((5, 5), np.float32) / 25
+        background[:, 120:] = cv2.filter2D(background[:, 120:], -1, filter)
+
+    elif mode == SHARPNING_IMAGE:
+        filter = np.array([[1, -2, 1], [-2, 5, -2], [1, -2, 1]], np.float32)
+        background[:, 120:] = cv2.filter2D(background[:, 120:], -1, filter)
+
+    elif mode == INVERSION_COLOR:
+        background[:, 120:] = 255 - background[:, 120:]
+    # if update:
+
+    elif mode == EXIT:
+        cv2.destroyAllWindows()
+        return
 
     cv2.imshow("PaintCV", background)
+
 background = np.full((500, 800, 3), 255, np.uint8)
 icons = place_icons(background, (60, 60))
 x, y, w, h = icons[-1]
