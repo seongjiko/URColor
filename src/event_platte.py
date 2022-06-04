@@ -6,26 +6,44 @@ import tkinter as tk
 from tkinter import filedialog
 
 def BGR2H(color):
-    b, g, r = color
-    b_ = b / 255
-    g_ = g / 255
-    r_ = r / 255
+    V = max(color)
+    B, G, R = color
+    minGBR = min(color)
+    if V == B:
+        result = 240 + (60*(R-G)) / (V - minGBR)
 
-    cmax = max([b_, g_, r_])
-    cmin = min([b_, g_, r_])
-    result = 0
-    temp = cmax - cmin
+    if V == G:
+        result = 120 + (60*(B-R)) / (V - minGBR)
 
-    if cmax == b_:
-        result = 60 * ((r_ - g_) / temp + 4)
+    if V == R:
+        result = (60*(G-B) / (V - minGBR))
 
-    if cmax == g_:
-        result = 60 * ((b_ - r_) / temp + 2)
+    result = (result/360) * 170
 
-    if cmax == r_:
-        result = 60 * (((g_ - b_) / temp) % 6)
+    if result < 0:
+        result += 170
 
     return result
+    # b, g, r = color
+    # b_ = b / 255
+    # g_ = g / 255
+    # r_ = r / 255
+    #
+    # cmax = max([b_, g_, r_])
+    # cmin = min([b_, g_, r_])
+    # result = 0
+    # temp = cmax - cmin
+    #
+    # if cmax == b_:
+    #     result = 60 * ((r_ - g_) / temp + 4)
+    #
+    # if cmax == g_:
+    #     result = 60 * ((b_ - r_) / temp + 2)
+    #
+    # if cmax == r_:
+    #     result = 60 * (((g_ - b_) / temp) % 6)
+
+    #return result
 
 def onMouse(event, x, y, flags, param):
     global pt1, pt2, mouse_mode, draw_mode
@@ -53,9 +71,13 @@ def onMouse(event, x, y, flags, param):
 
 color_img = np.array([])
 gray_img = np.array([])
+
+tempPos = []
+usingStack = False # 스택모드
+
 def command(mode):
     global icons, background, Color, hue, color_img, gray_img, color_img_resize, hsv_img_resize #hsv_img
-
+    global tempPos, gray_img_resize, usingStack
     if mode == PALETTE:
         print('select PALETTE')
         pixel = background[pt2[::-1]]
@@ -81,15 +103,39 @@ def command(mode):
         background[:, 120:] = gray_img_resize
 
 
-    elif EXTRACT_COLOR:
+    elif mode == EXTRACT_COLOR:
         HUE = BGR2H(Color)
         print(HUE)
+
+        if usingStack:
+            background[:, 120:] = gray_img_resize
+
         for i in range(500):
             for j in range(120, 800):
                 p = hsv_img_resize[i][j-120]
-                if HUE < p[0] <= HUE + 30:
-                    # print('paint!')
+                if HUE - 10 < p[0] <= HUE + 10 and p[1] != 0 and p[2] != 0:
                     background[i, j] = color_img_resize[i, j-120]
+                    tempPos.append([i, j])
+
+    elif mode == STACK_COLOR:
+        if usingStack :
+            usingStack = False
+            print('Change stack mode : ON')
+
+        else:
+            usingStack = True
+            print('Change stack mode : OFF')
+
+
+    elif mode == CHANGE_COLOR:
+        for pos in tempPos:
+            r, c = pos
+            background[r, c] = Color
+            tempPos = []
+
+    elif mode == RESET_IMAGE:
+        background[:, 120:] = gray_img_resize
+
 
     cv2.imshow("PaintCV", background)
 background = np.full((500, 800, 3), 255, np.uint8)
