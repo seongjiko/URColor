@@ -11,8 +11,8 @@ def place_icons(image, size):
                 "originIcon",   # 5 원본 보기
                 "undoIcon",   # 6 뒤로가기
                 "blurIcon",   # 7 블러 적용
-                "edgeIcon",   # 8 샤프닝 적용
-                "inversionIcon",   # 9 색 반전
+                "sharpeningIcon",   # 8 샤프닝 적용
+                "saveIcon",   # 9 색 반전
                 "quitIcon",   # 10 프로그램 종료
                 "colorIcon"    # 11 색상
                  ]

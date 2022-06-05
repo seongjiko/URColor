@@ -72,7 +72,7 @@ def command(mode):
     elif mode == OPEN_IMAGE:
         print('open file')
         root = tk.Tk()
-        filePath = filedialog.askopenfilename(initialdir='', title= 'Select file', filetypes=(('png files', '*.png'), ('jpg files', '*.jpg'), ('all files', '*.*')))
+        filePath = filedialog.askopenfilename(initialdir='', title= 'Select file', filetypes=(('jpg files', '*.jpg'), ('png files', '*.png'), ('all files', '*.*')))
         root.destroy()
 
         color_img = cv2.imread(filePath)
@@ -144,9 +144,12 @@ def command(mode):
         filter = np.array([[1, -2, 1], [-2, 5, -2], [1, -2, 1]], np.float32)
         background[:, 120:] = cv2.filter2D(background[:, 120:], -1, filter)
 
-    elif mode == INVERSION_COLOR:
-        background[:, 120:] = 255 - background[:, 120:]
-    # if update:
+    # elif mode == INVERSION_COLOR:
+    #     background[:, 120:] = 255 - background[:, 120:]
+
+    elif mode == SAVE_IMAGE:
+        cv2.imwrite('result.png', background)
+        print("save!")
 
     elif mode == EXIT:
         cv2.destroyAllWindows()
