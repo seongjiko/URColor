@@ -13,7 +13,7 @@
 
 
 ## 22.06.05 구현 완료, 시연 사진
-### 자세한 기능들은 doc폴더 속 functions.txt를 참고해주시고 소스파일과 이미지파일이 모두 업로드 되어있습니다!
+### 자세한 기능들은 doc폴더 속 functions.txt를 참고해주시고 소스파일과 이미지파일이 모두 업로드 되어있습니다. src속 event_platte.py를 실행하시면 됩니다!
 
 `프로그램 초기화면`  
 ![image](https://user-images.githubusercontent.com/46768743/172040645-60f8c9d7-d240-4a52-a532-c3ec24278c8d.png)
