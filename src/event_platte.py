@@ -59,17 +59,17 @@ def command(mode):
     global tempPos, gray_img_resize, usingStack
     update = False
 
-    if mode == PALETTE:
+    if mode == PALETTE: # HUE에 따른 팔레트
         print('select PALETTE')
         pixel = background[pt2[::-1]]
         x, y, w, h = icons[COLOR]
         background[y:y+h-1, x:x+w-1] = pixel
         Color = tuple(map(int, pixel))
 
-    elif mode == HUE_IDX:
+    elif mode == HUE_IDX: # HUE
         create_colorPlatte(background, pt2[0], icons[PALETTE])
 
-    elif mode == OPEN_IMAGE:
+    elif mode == OPEN_IMAGE: # 파일 열기
         print('open file')
         root = tk.Tk()
         filePath = filedialog.askopenfilename(initialdir='', title= 'Select file', filetypes=(('jpg files', '*.jpg'), ('png files', '*.png'), ('all files', '*.*')))
@@ -128,7 +128,6 @@ def command(mode):
         cv2.imwrite('../temp/log.jpg', background)
         for i in range(500):
             for j in range(120, 800):
-                # if [i, j] not in tempPos:
                 background[i, j] = color_img_resize[i, j-120]
         background[:, 120:] = color_img_resize
 
@@ -148,7 +147,7 @@ def command(mode):
     #     background[:, 120:] = 255 - background[:, 120:]
 
     elif mode == SAVE_IMAGE:
-        cv2.imwrite('result.png', background)
+        cv2.imwrite('result.png', background[:, 120:])
         print("save!")
 
     elif mode == EXIT:
